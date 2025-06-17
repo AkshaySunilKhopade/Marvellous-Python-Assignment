@@ -24,38 +24,6 @@ def CalculateCheckSum(path,BlockSize=1024):
     return hobj.hexdigest()    
 
 
-def Traversal(DirName):
-    
-    flag = os.path.isabs(DirName)
-    if(flag==False):
-        DirName = os.path.abspath(DirName)
-        
-    ret = os.path.exists(DirName)
-    
-            
-    if(ret==False):
-        print("The Path is invalid ")
-        exit()
-        
-    flag = os.path.isdir(DirName)
-    if(flag==False):
-        print("PAth is valid but the target is not directory")
-        exit()
-            
-    # print("Absolute path is : "+DirName)
-
-    for FolderName,SubFolder,Files in os.walk(DirName):
-        
-        for filename in Files :
-            # filename = FolderName+"/"+filename
-            filename = os.path.join(FolderName,filename)
-            checksum = CalculateCheckSum(filename)
-            # print("File name :",filename,end=" ")
-            # print("",checksum)
-            # print()
-                                    
-    
-# copy down
 
 def FindDuplicate(DirName):
     
@@ -88,31 +56,11 @@ def FindDuplicate(DirName):
             if checksum in Duplicate:
                 Duplicate[checksum].append(filename)
             else :
-                Duplicate[checksum] = [filename]                                   
+                Duplicate[checksum] = [filename]  
+        print(Duplicate)                                 
     
     
-    return Duplicate
-
-def DisplayResult(MyDict):
-    
-    Result = list(filter(lambda X : len(X)>1,MyDict.values()))
-    # print(Result)
-    
-    Count = 0
-    
-    for value in Result:
-        for subvalue in value:
-            Count = Count + 1
-            print(subvalue)
-        print("------------------------------")
-        print("Value of Count is :",Count)
-        print("------------------------------")
-        Count = 0           
-
-def DeleteDuplicate(path="Test"):
-    
-    MyDict = FindDuplicate(path)
-    Result = list(filter(lambda X : len(X)>1,MyDict.values()))
+    Result = list(filter(lambda X : len(X)>1,Duplicate.values()))
     # print(Result)
     
     Count = 0
@@ -138,9 +86,10 @@ def DeleteDuplicate(path="Test"):
     fobj = open(filename,"w")
     fobj.write(Border+"\n")
     fobj.write("Deleted Files are :")
+    fobj.write("\n")
     for i in range(0,len(data)):
         fobj.write(data[i])
-        print()
+        fobj.write("\n")
     fobj.write(Border+"\n")
     
     
@@ -168,17 +117,13 @@ def main():
         elif((sys.argv[1]=="--u") or (sys.argv[1]=="--U")):
             print("use the given script as ")
             print("ScriptName.py Argument1 Arguement2")
-    
-    if((len(sys.argv)==3)):
+            
+        else:
             #logic            
             # Traversal(sys.argv[1])
             # result = FindDuplicate(sys.argv[1])
-
-            schedule.every(int(sys.argv[2])).minutes.do(DeleteDuplicate,)
+            FindDuplicate(sys.argv[1])
             
-            while(True):
-                schedule.run_pending()
-                time.sleep(1)
     else :
         print("Invalid no of arguements")
         print("Use the given flags as :")
